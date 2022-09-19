@@ -6,5 +6,6 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Set;
 
 public interface ReelRepository extends CrudRepository<Reel, Long> {
-    Set<Reel> findReelsByUserId(Long id);
+    Iterable<Reel> findReelsByUserId(Long id);
+    Iterable<Reel> findReelsByUserEmail(String email);
 }
