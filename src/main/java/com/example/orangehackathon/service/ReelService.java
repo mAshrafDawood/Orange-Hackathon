@@ -3,9 +3,13 @@ package com.example.orangehackathon.service;
 import com.example.orangehackathon.dto.ReelDTO;
 import com.example.orangehackathon.dto.UserDTO;
 import com.example.orangehackathon.entity.Reel;
+import com.example.orangehackathon.entity.User;
+import com.example.orangehackathon.exceptions.ErrorResponse;
+import com.example.orangehackathon.exceptions.Errors;
 import com.example.orangehackathon.repository.ReelRepository;
 import com.example.orangehackathon.repository.UserRepository;
 import com.example.orangehackathon.utility.FileUploadUtil;
+import com.example.orangehackathon.utility.ReelUtil;
 import com.example.orangehackathon.utility.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -53,14 +57,7 @@ public class ReelService {
             String username = UserUtil.getCurrentUsername();
             reel.setUser(userRepository.findUserByEmail(username));
             reel = reelRepository.save(reel);
-
-            UserDTO retUser = new UserDTO();
-            retUser.setId(reel.getUser().getId());
-            retUser.setEmail(reel.getUser().getEmail());
-            retUser.setName(reel.getUser().getName());
-
-            ReelDTO ret = new ReelDTO(reel.getId(), reel.getVideo(), reel.getDescription(), retUser);
-            return ret;
+            return ReelUtil.convertToDTO(reel);
         }
     }
 
@@ -74,16 +71,48 @@ public class ReelService {
         }
     }
 
-    public Iterable<Reel> getAllReels(){
-        return reelRepository.findAll();
+    public Set<ReelDTO> getAllReels(){
+        return ReelUtil.convertAllToDTO(reelRepository.findAll());
     }
 
-    public Optional<Reel> getReel(Long id){
-        return reelRepository.findById(id);
+    public ReelDTO getReel(Long id){
+
+        Optional <Reel> optionalReel =  reelRepository.findById(id);
+        if (optionalReel.isEmpty()) return null;
+        return ReelUtil.convertToDTO(optionalReel.get());
     }
 
-    public Iterable<Reel> getMyReels(){
+    public Iterable<ReelDTO> getMyReels(){
         String username = UserUtil.getCurrentUsername();
-        return reelRepository.findReelsByUserEmail(username);
+        return ReelUtil.convertAllToDTO(reelRepository.findReelsByUserEmail(username));
+    }
+
+    public Set<ReelDTO> getMyLikes(){
+        User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
+        Set <Reel> ans = reelRepository.findAllReelsByUserId(currUser.getId());
+        return ReelUtil.convertAllToDTO(ans);
+    }
+
+    public ResponseEntity<?> likeReel(Long reelId){
+        Optional<Reel> optionalReel = reelRepository.findById(reelId);
+        if (optionalReel.isEmpty()) return new ResponseEntity<>(new ErrorResponse(Errors.REEL_IS_MISSING.getCode(), Errors.REEL_IS_MISSING.getMessage()), HttpStatus.BAD_REQUEST);
+        Reel reel = optionalReel.get();
+        User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
+        if (currUser.getLike().contains(reel)) return new ResponseEntity<>(ReelUtil.convertToDTO(reel), HttpStatus.OK);
+        currUser.getLike().add(reel);
+        reel.getLike().add(currUser);
+        userRepository.save(currUser);
+        return new ResponseEntity<>(ReelUtil.convertToDTO(reelRepository.save(reel)), HttpStatus.OK);
+    }
+
+    public ReelDTO removeLikeFromReel(Long reelId){
+        Optional<Reel> optionalReel = reelRepository.findById(reelId);
+        if (optionalReel.isEmpty()) return null;
+        Reel reel = optionalReel.get();
+        User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
+        reel.getLike().remove(currUser);
+        currUser.getLike().remove(reel);
+        userRepository.save(currUser);
+        return ReelUtil.convertToDTO(reelRepository.save(reelRepository.save(reel)));
     }
 }

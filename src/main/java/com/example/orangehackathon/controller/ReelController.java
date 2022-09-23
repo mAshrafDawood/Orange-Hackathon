@@ -2,7 +2,6 @@ package com.example.orangehackathon.controller;
 
 import com.example.orangehackathon.dto.ReelDTO;
 import com.example.orangehackathon.dto.ReelUploadDTO;
-import com.example.orangehackathon.entity.Reel;
 import com.example.orangehackathon.service.ReelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -10,7 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -20,7 +19,7 @@ public class ReelController {
     @Autowired
     ReelService reelService;
 
-    @GetMapping(value = "/user/{id}")
+    @GetMapping(value = "/get/user/{id}")
     public ResponseEntity<?> findUserReels(@PathVariable Long id) {
         return reelService.findUserReels(id);
     }
@@ -36,17 +35,32 @@ public class ReelController {
     }
 
     @GetMapping(value = "/get")
-    public Iterable<Reel> getAllReels(){
+    public Set<ReelDTO> getAllReels(){
         return reelService.getAllReels();
     }
 
     @GetMapping(value = "/get/{id}")
-    public Optional<Reel> getReel(@PathVariable Long id){
+    public ReelDTO getReel(@PathVariable Long id){
         return reelService.getReel(id);
     }
 
     @GetMapping(value = "/my")
-    public Iterable<Reel> getMyReels(){
+    public Iterable<ReelDTO> getMyReels(){
         return reelService.getMyReels();
+    }
+
+    @GetMapping(value = "/get/liked")
+    public Set<ReelDTO> getMyLikes(){
+        return reelService.getMyLikes();
+    }
+
+    @PostMapping(value = "like/{reelId}")
+    public ResponseEntity<?> likeReel(@PathVariable Long reelId){
+        return reelService.likeReel(reelId);
+    }
+
+    @DeleteMapping(value = "like/{reelId}")
+    public ReelDTO removeLikeFromReel(@PathVariable Long reelId){
+        return reelService.removeLikeFromReel(reelId);
     }
 }

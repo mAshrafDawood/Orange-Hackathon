@@ -1,6 +1,6 @@
 package com.example.orangehackathon.config;
 
-import com.example.orangehackathon.service.UserService;
+import com.example.orangehackathon.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.web.filter.CorsFilter;
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private UserService userService;
+    private AuthService authService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,7 +39,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     public void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(bcryptPasswordEncoder);
+        auth.userDetailsService(authService).passwordEncoder(bcryptPasswordEncoder);
     }
 
     @Bean
