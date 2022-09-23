@@ -8,6 +8,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Base64;
+import java.util.Scanner;
 
 public class FileUploadUtil {
     public static boolean saveFile(String uploadDir, String fileName, MultipartFile multipartFile){
@@ -24,7 +26,12 @@ public class FileUploadUtil {
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
             Path filePath = uploadPath.resolve(fileName);
-            Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+            StringBuilder dataBuilder = new StringBuilder();
+            Scanner scanner = new Scanner(inputStream);
+            while (scanner.hasNext()) dataBuilder.append(scanner.next());
+            String data = Base64.getEncoder().encodeToString(dataBuilder.toString().getBytes());
+
+            Files.writeString(filePath, data);
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return false;

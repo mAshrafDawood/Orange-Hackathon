@@ -21,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -43,9 +44,8 @@ public class ReelService {
         return ret;
     }
 
-    public ReelDTO uploadVideo(MultipartFile video, String description) {
-        String fileName = cleanPath(video.getOriginalFilename()).replace(" ", "-");
-
+    public ReelDTO uploadReel(MultipartFile video, String description) {
+        String fileName = cleanPath(Objects.requireNonNull(video.getOriginalFilename())).replace(" ", "-") + ".base64";
         if (!FileUploadUtil.saveFile(STATIC_DIR, fileName, video)) {
             return null;
         } else {
@@ -55,8 +55,7 @@ public class ReelService {
             reel.setVideo(uploadPath.toString());
             String username = UserUtil.getCurrentUsername();
             reel.setUser(userRepository.findUserByEmail(username));
-            reel = reelRepository.save(reel);
-            return ReelUtil.convertToDTO(reel);
+            return ReelUtil.convertToDTO(reelRepository.save(reel));
         }
     }
 

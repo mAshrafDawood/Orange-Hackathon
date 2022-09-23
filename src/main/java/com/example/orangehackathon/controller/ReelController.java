@@ -25,11 +25,11 @@ public class ReelController {
     }
 
     @PostMapping(value = "/add")
-    public ReelDTO uploadVideo(@ModelAttribute ReelUploadDTO reelUploadDTO) {
-        return reelService.uploadVideo(reelUploadDTO.getVideo(), reelUploadDTO.getDescription());
+    public ReelDTO uploadReel(@ModelAttribute ReelUploadDTO reelUploadDTO) {
+        return reelService.uploadReel(reelUploadDTO.getVideo(), reelUploadDTO.getDescription());
     }
 
-    @GetMapping(value = "/get/video", produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @GetMapping(value = "/get/video")
     public Resource getVideo(@RequestBody String path){
         return reelService.getVideo(path);
     }

@@ -12,8 +12,10 @@ public class ReelUtil {
     public static ReelDTO convertToDTO(Reel reel){
         Set<User> like = reel.getLikes();
         Set<UserDTO> likeDTO = new HashSet<>();
-        for (User user : like){
-            likeDTO.add(UserUtil.convertToDTO(user));
+        if (like != null){
+            for (User user : like){
+                likeDTO.add(UserUtil.convertToDTO(user));
+            }
         }
         return new ReelDTO(
                 reel.getId(),
