@@ -38,10 +38,8 @@ public class ReelService {
     UserRepository userRepository;
 
 
-    public ResponseEntity<?> findUserReels(Long id) {
-        Iterable<Reel> reels = reelRepository.findReelsByUserId(id);
-        ResponseEntity<Reel> ret = new ResponseEntity(reels, HttpStatus.OK);
-        return ret;
+    public Set<ReelDTO> findUserReels(Long id) {
+        return ReelUtil.convertAllToDTO(reelRepository.findReelsByUserId(id));
     }
 
     public ReelDTO uploadReel(MultipartFile video, String description) {
@@ -80,7 +78,7 @@ public class ReelService {
         return ReelUtil.convertToDTO(optionalReel.get());
     }
 
-    public Iterable<ReelDTO> getMyReels(){
+    public Set<ReelDTO> getMyReels(){
         String username = UserUtil.getCurrentUsername();
         return ReelUtil.convertAllToDTO(reelRepository.findReelsByUserEmail(username));
     }

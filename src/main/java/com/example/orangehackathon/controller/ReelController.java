@@ -20,7 +20,7 @@ public class ReelController {
     ReelService reelService;
 
     @GetMapping(value = "/get/user/{id}")
-    public ResponseEntity<?> findUserReels(@PathVariable Long id) {
+    public Set<ReelDTO> findUserReels(@PathVariable Long id) {
         return reelService.findUserReels(id);
     }
 
@@ -45,7 +45,7 @@ public class ReelController {
     }
 
     @GetMapping(value = "/my")
-    public Iterable<ReelDTO> getMyReels(){
+    public Set<ReelDTO> getMyReels(){
         return reelService.getMyReels();
     }
 
