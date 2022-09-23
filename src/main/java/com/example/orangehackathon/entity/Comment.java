@@ -1,6 +1,6 @@
 package com.example.orangehackathon.entity;
 
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
 import org.hibernate.Hibernate;

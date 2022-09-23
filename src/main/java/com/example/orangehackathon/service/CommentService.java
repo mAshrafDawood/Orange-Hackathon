@@ -10,7 +10,6 @@ import com.example.orangehackathon.repository.UserRepository;
 import com.example.orangehackathon.utility.CommentUtil;
 import com.example.orangehackathon.utility.UserUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -29,9 +28,7 @@ public class CommentService {
 
     public CommentDTO addComment(Long reelId, String commentText){
         Optional<Reel> optionalReel = reelRepository.findById(reelId);
-        if (optionalReel.isEmpty()){
-            return null;
-        }
+        if (!optionalReel.isPresent()) return null;
         User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
         Reel reel = optionalReel.get();
         Comment temp = new Comment();
@@ -43,7 +40,7 @@ public class CommentService {
 
     public boolean deleteComment(Long commentId) {
         Optional <Comment> optionalComment = commentRepository.findById(commentId);
-        if (optionalComment.isEmpty()) return false;
+        if (!optionalComment.isPresent()) return false;
         Comment currComment = optionalComment.get();
         if (currComment.getUser().equals(userRepository.findUserByEmail(UserUtil.getCurrentUsername()))){
             commentRepository.deleteById(commentId);

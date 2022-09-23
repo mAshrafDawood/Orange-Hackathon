@@ -60,8 +60,7 @@ public class ReelService {
     public Resource getVideo(String path){
         Path file = Paths.get(path);
         try {
-            Resource resource = new UrlResource(file.toUri());
-            return resource;
+            return new UrlResource(file.toUri());
         } catch (MalformedURLException e) {
             throw new RuntimeException("File is corrupted");
         }
@@ -74,8 +73,7 @@ public class ReelService {
     public ReelDTO getReel(Long id){
 
         Optional <Reel> optionalReel =  reelRepository.findById(id);
-        if (optionalReel.isEmpty()) return null;
-        return ReelUtil.convertToDTO(optionalReel.get());
+        return optionalReel.map(ReelUtil::convertToDTO).orElse(null);
     }
 
     public Set<ReelDTO> getMyReels(){
@@ -91,7 +89,7 @@ public class ReelService {
 
     public ResponseEntity<?> likeReel(Long reelId){
         Optional<Reel> optionalReel = reelRepository.findById(reelId);
-        if (optionalReel.isEmpty()) return new ResponseEntity<>(new ErrorResponse(Errors.REEL_IS_MISSING.getCode(), Errors.REEL_IS_MISSING.getMessage()), HttpStatus.BAD_REQUEST);
+        if (!optionalReel.isPresent()) return new ResponseEntity<>(new ErrorResponse(Errors.REEL_IS_MISSING.getCode(), Errors.REEL_IS_MISSING.getMessage()), HttpStatus.BAD_REQUEST);
         Reel reel = optionalReel.get();
         User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
         if (currUser.getLikes().contains(reel)) return new ResponseEntity<>(ReelUtil.convertToDTO(reel), HttpStatus.OK);
@@ -103,7 +101,7 @@ public class ReelService {
 
     public ReelDTO removeLikeFromReel(Long reelId){
         Optional<Reel> optionalReel = reelRepository.findById(reelId);
-        if (optionalReel.isEmpty()) return null;
+        if (!optionalReel.isPresent()) return null;
         Reel reel = optionalReel.get();
         User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
         reel.getLikes().remove(currUser);

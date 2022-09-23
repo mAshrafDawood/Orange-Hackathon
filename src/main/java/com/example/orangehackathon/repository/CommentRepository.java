@@ -1,7 +1,6 @@
 package com.example.orangehackathon.repository;
 
 import com.example.orangehackathon.entity.Comment;
-import com.example.orangehackathon.entity.Reel;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.Set;

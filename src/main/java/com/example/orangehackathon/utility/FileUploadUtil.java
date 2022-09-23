@@ -7,7 +7,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 import java.util.Scanner;
 
@@ -31,7 +30,7 @@ public class FileUploadUtil {
             while (scanner.hasNext()) dataBuilder.append(scanner.next());
             String data = Base64.getEncoder().encodeToString(dataBuilder.toString().getBytes());
 
-            Files.writeString(filePath, data);
+            Files.write(filePath, data.getBytes());
         } catch (IOException ioe) {
             ioe.printStackTrace();
             return false;
