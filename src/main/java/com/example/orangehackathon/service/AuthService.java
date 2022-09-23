@@ -6,6 +6,8 @@ import com.example.orangehackathon.entity.User;
 import com.example.orangehackathon.exceptions.ErrorResponse;
 import com.example.orangehackathon.exceptions.Errors;
 import com.example.orangehackathon.repository.UserRepository;
+import com.example.orangehackathon.valiator.EmailValidator;
+import com.example.orangehackathon.valiator.PasswordValidator;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -28,18 +30,23 @@ public class AuthService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
+
     public ResponseEntity<?> registerUser(User user) {
         if (user == null){
             return new ResponseEntity<>(new ErrorResponse(Errors.USER_IS_MISSING.getCode(),
                     Errors.USER_IS_MISSING.getMessage()), HttpStatus.BAD_REQUEST);
         }
         if (!userRepository.existsByEmail(user.getEmail())){
+
+            if (!EmailValidator.isValid(user.getEmail()) || !PasswordValidator.isValid(user.getPassword())) {
+                return new ResponseEntity<>(new ErrorResponse(Errors.USER_CREDENTIALS_ERROR.getCode(),
+                        Errors.USER_CREDENTIALS_ERROR.getMessage()), HttpStatus.BAD_REQUEST);
+            }
+
             UserDTO userDto = new UserDTO();
             user.setPassword(bcryptPasswordEncoder.encode(user.getPassword()));
-            user = userRepository.save(user);
-            BeanUtils.copyProperties(user, userDto);
-            ResponseEntity <UserDTO> ret = new ResponseEntity<>(userDto, HttpStatus.OK);
-            return ret;
+            BeanUtils.copyProperties(userRepository.save(user), userDto);
+            return new ResponseEntity<>(userDto, HttpStatus.OK);
         }
         return new ResponseEntity<>(new ErrorResponse(Errors.USER_EMAIL_ALREADY_EXIST.getCode(),
                 Errors.USER_EMAIL_ALREADY_EXIST.getMessage()), HttpStatus.BAD_REQUEST);
