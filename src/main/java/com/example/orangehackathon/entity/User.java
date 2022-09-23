@@ -45,13 +45,16 @@ public class User {
     )
     @Singular
     @ToString.Exclude
-    private Set<Reel> like;
+    private Set<Reel> likes;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST)
     @Singular
     @ToString.Exclude
     private Set<Reel> reels;
+
+    @OneToMany(mappedBy = "user")
+    private Set<Comment> comments;
 
     @Override
     public boolean equals(Object o) {

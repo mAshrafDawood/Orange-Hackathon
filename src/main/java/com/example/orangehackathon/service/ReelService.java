@@ -1,7 +1,6 @@
 package com.example.orangehackathon.service;
 
 import com.example.orangehackathon.dto.ReelDTO;
-import com.example.orangehackathon.dto.UserDTO;
 import com.example.orangehackathon.entity.Reel;
 import com.example.orangehackathon.entity.User;
 import com.example.orangehackathon.exceptions.ErrorResponse;
@@ -98,9 +97,9 @@ public class ReelService {
         if (optionalReel.isEmpty()) return new ResponseEntity<>(new ErrorResponse(Errors.REEL_IS_MISSING.getCode(), Errors.REEL_IS_MISSING.getMessage()), HttpStatus.BAD_REQUEST);
         Reel reel = optionalReel.get();
         User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
-        if (currUser.getLike().contains(reel)) return new ResponseEntity<>(ReelUtil.convertToDTO(reel), HttpStatus.OK);
-        currUser.getLike().add(reel);
-        reel.getLike().add(currUser);
+        if (currUser.getLikes().contains(reel)) return new ResponseEntity<>(ReelUtil.convertToDTO(reel), HttpStatus.OK);
+        currUser.getLikes().add(reel);
+        reel.getLikes().add(currUser);
         userRepository.save(currUser);
         return new ResponseEntity<>(ReelUtil.convertToDTO(reelRepository.save(reel)), HttpStatus.OK);
     }
@@ -110,8 +109,8 @@ public class ReelService {
         if (optionalReel.isEmpty()) return null;
         Reel reel = optionalReel.get();
         User currUser = userRepository.findUserByEmail(UserUtil.getCurrentUsername());
-        reel.getLike().remove(currUser);
-        currUser.getLike().remove(reel);
+        reel.getLikes().remove(currUser);
+        currUser.getLikes().remove(reel);
         userRepository.save(currUser);
         return ReelUtil.convertToDTO(reelRepository.save(reelRepository.save(reel)));
     }

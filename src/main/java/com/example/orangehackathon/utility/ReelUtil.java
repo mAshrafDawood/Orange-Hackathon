@@ -10,12 +10,18 @@ import java.util.Set;
 
 public class ReelUtil {
     public static ReelDTO convertToDTO(Reel reel){
-        Set<User> like = reel.getLike();
+        Set<User> like = reel.getLikes();
         Set<UserDTO> likeDTO = new HashSet<>();
         for (User user : like){
             likeDTO.add(UserUtil.convertToDTO(user));
         }
-        return new ReelDTO(reel.getId(), reel.getVideo(), reel.getDescription(), likeDTO, UserUtil.convertToDTO(reel.getUser()));
+        return new ReelDTO(
+                reel.getId(),
+                reel.getVideo()
+                , reel.getDescription(),
+                likeDTO,
+                UserUtil.convertToDTO(reel.getUser())
+        );
     }
 
     public static Set <ReelDTO> convertAllToDTO(Iterable<Reel> reels){

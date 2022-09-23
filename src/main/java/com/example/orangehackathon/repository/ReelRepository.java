@@ -12,7 +12,7 @@ public interface ReelRepository extends JpaRepository<Reel, Long> {
     Iterable<Reel> findReelsByUserId(Long id);
     Iterable<Reel> findReelsByUserEmail(String email);
 
-    @Query("SELECT r FROM Reel r JOIN r.like u WHERE 1=1")
+    @Query("SELECT r FROM Reel r JOIN r.likes u WHERE 1=1")
     @EntityGraph(attributePaths = {"like"})
     Set <Reel> findAllReelsByUserId(@Param("id") Long id);
 

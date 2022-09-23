@@ -1,4 +1,4 @@
-package com.example.orangehackathon.config;
+package com.example.orangehackathon.filter;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import jakarta.servlet.FilterChain;

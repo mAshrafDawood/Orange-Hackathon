@@ -1,5 +1,7 @@
 package com.example.orangehackathon.config;
 
+import com.example.orangehackathon.filter.JWTAuthenticationFilter;
+import com.example.orangehackathon.filter.JWTAuthorizationFilter;
 import com.example.orangehackathon.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
